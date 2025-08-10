@@ -1,0 +1,4 @@
+bitarray==2.9.1
+scapy==2.5.0
+flask==2.3.3
+werkzeug==2.3.7
