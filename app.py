@@ -12,7 +12,7 @@ from werkzeug.utils import secure_filename
 import subprocess
 import json
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
 app.config['UPLOAD_FOLDER'] = tempfile.gettempdir()
 

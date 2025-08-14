@@ -1,104 +1,80 @@
-# AMR-WB Converter Web Application
+# AMR-WB Web Application
 
-A web-based GUI interface for the AMR-WB audio converter tool. This application provides an easy-to-use web interface for extracting AMR, AMR-WB, and EVS audio frames from PCAP files.
+A Flask web application for converting PCAP network capture files containing voice audio data into playable audio files.
 
 ## Features
 
-- **Web-based Interface**: Modern, responsive web UI with drag-and-drop file upload
-- **Multiple Codec Support**: AMR, AMR-WB, and EVS codec extraction
-- **Auto-detection**: Automatic codec detection or manual selection
-- **Framing Options**: Support for IETF RFC4867 and Iu framing
-- **File Download**: Direct download of converted audio files
-- **Real-time Progress**: Visual feedback during conversion process
+- **PCAP Analysis**: Examine network packets to identify voice codecs
+- **Audio Conversion**: Convert RTP streams to playable audio formats
+- **Multiple Codecs**: Support for AMR, AMR-WB, and EVS
+- **Modern Web Interface**: Responsive design with drag-and-drop file upload
+- **Web Standards Compliant**: Separated HTML, CSS, and JavaScript
+
+## Project Structure
+
+```
+amr-wb-webapp/
+├── app.py                 # Main Flask web server
+├── pcap_parser.py         # Core conversion engine
+├── templates/
+│   └── index.html         # Semantic HTML structure
+├── static/
+│   ├── css/
+│   │   └── styles.css     # All CSS styles
+│   └── js/
+│       └── app.js         # All JavaScript functionality
+├── requirements.txt        # Python dependencies
+└── run.sh                 # Startup script
+```
+
+## Web Standards Compliance
+
+This application follows modern web development best practices:
+
+- **Separation of Concerns**: HTML (structure), CSS (presentation), JavaScript (behavior)
+- **Semantic HTML**: Proper use of `<header>`, `<main>`, `<section>` tags
+- **Accessibility**: Proper labeling and ARIA-compliant structure
+- **Responsive Design**: Mobile-first approach with CSS Grid and Flexbox
+- **Modern JavaScript**: ES6+ features, async/await, event delegation
 
 ## Installation
 
-1. Install Python dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-2. Make sure the templates directory exists:
-```bash
-mkdir -p templates
-```
+1. Clone the repository
+2. Install Python dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the application:
+   ```bash
+   python app.py
+   ```
 
 ## Usage
 
-1. Start the web application:
-```bash
-python3 app.py
-```
+1. Open your browser to `http://localhost:8888`
+2. Upload a PCAP or PCAPNG file (max 100MB)
+3. Choose to analyze the file first or convert directly
+4. Select codec and framing options
+5. Download the converted audio file
 
-2. Open your web browser and navigate to:
-```
-http://localhost:5000
-```
+## Supported Formats
 
-3. Use the web interface to:
-   - Upload a PCAP or PCAPNG file (drag-and-drop or click to select)
-   - Choose codec (auto-detect recommended)
-   - Select framing type (IETF or Iu)
-   - Click "Convert Audio" to process the file
-   - Download the resulting audio file
+- **Input**: PCAP, PCAPNG files
+- **Output**: 
+  - `.3ga` for AMR and AMR-WB
+  - `.evs-mime` for EVS codec
 
 ## API Endpoints
 
 - `GET /` - Main web interface
-- `POST /api/convert` - Convert PCAP file to audio
-- `GET /api/download/<filename>` - Download converted audio file
-- `GET /api/health` - Health check endpoint
+- `POST /api/analyze` - Analyze PCAP file structure
+- `POST /api/convert` - Convert PCAP to audio
+- `GET /api/download/<filename>` - Download converted file
+- `GET /api/health` - Health check
 
-## File Formats
+## Dependencies
 
-### Input
-- PCAP files (.pcap)
-- PCAPNG files (.pcapng)
-- Maximum file size: 100MB
-
-### Output
-- AMR/AMR-WB: .3ga files (playable with VLC)
-- EVS: .evs-mime files (requires EVS decoder)
-
-## Converting Output Files
-
-### AMR/AMR-WB (.3ga files)
-- Play directly with [VLC Media Player](https://www.videolan.org/)
-- Convert to other formats with [FFmpeg](https://ffmpeg.org/):
-```bash
-ffmpeg -i output.3ga output.wav
-```
-
-### EVS (.evs-mime files)
-- Use 3GPP EVS decoder (available in 3GPP TS26.442/TS26.443):
-```bash
-EVS_dec.exe -mime 48 output.evs-mime output.raw
-```
-- Import the .raw file into [Audacity](https://www.audacityteam.org/) with these settings:
-  - Encoding: Signed 16-bit PCM
-  - Byte order: Little endian
-  - Channels: 1 Channel (Mono)
-  - Sampling rate: 48000 Hz
-
-## Configuration
-
-The application can be configured by modifying these variables in `app.py`:
-
-- `MAX_CONTENT_LENGTH`: Maximum upload file size (default: 100MB)
-- `UPLOAD_FOLDER`: Temporary directory for file processing
-- Host and port settings in the `app.run()` call
-
-## Security Notes
-
-- Files are automatically cleaned up after processing
-- Only PCAP/PCAPNG files are accepted
-- Output files are securely generated and served
-- Temporary files are stored in system temp directory
-
-## Limitations
-
-Same as the original pcap_parser.py:
-- Single channel audio only
-- One codec frame per packet
-- EVS: Only compact payload format supported
-- Iu framing not supported for EVS codec
+- Flask 2.3.3
+- Scapy 2.5.0
+- Bitarray 2.9.1
+- Werkzeug 2.3.7
